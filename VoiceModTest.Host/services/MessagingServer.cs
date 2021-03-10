@@ -41,12 +41,6 @@ namespace VoiceModTest.Host.services
 
                 socket.OnError = exception =>
                     Console.WriteLine($"OnError {exception.Message}");
-
-                //socket.OnPing = bytes =>
-                  //  socket.Send("Pong");
-
-               // socket.OnPong = bytes =>
-                 //   socket.Send("Ping");
             });
 
 

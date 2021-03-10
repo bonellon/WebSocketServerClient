@@ -25,25 +25,26 @@ namespace VoiceModTest.Host
             }
 
             var client = new MessageClient();
-            await client.Connect(new CancellationToken());
+            var cancellationTokenSource = new CancellationTokenSource(5000);
+            await client.Connect(cancellationTokenSource.Token)
+                .ContinueWith((t) => cancellationTokenSource.Dispose());
 
             if (client.GetClientState() == WebSocketState.Open)
             {
-                await client.Disconnect(new CancellationToken());
+
+                cancellationTokenSource = new CancellationTokenSource(5000);
+                await client.Disconnect(cancellationTokenSource.Token)
+                    .ContinueWith((t) => cancellationTokenSource.Dispose()); ;
             }
             Console.WriteLine("WebSocket CLOSED");
         }
 
         private static bool CheckIfPortAvailable(int port)
         {
-            IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
-            IPEndPoint[] end_point = properties.GetActiveTcpListeners();
-            var ports = end_point.Select(p => p.Port).ToList<int>();
-            if (!ports.Contains(port))
-            {
-                return true;
-            }
-            return false;
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+            var endpoint = properties.GetActiveTcpListeners();
+            var ports = endpoint.Select(p => p.Port).ToList();
+            return !ports.Contains(port);
         }
     }
 }

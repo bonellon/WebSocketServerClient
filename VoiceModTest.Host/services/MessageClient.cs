@@ -29,15 +29,23 @@ namespace VoiceModTest.Host.services
 
         public async Task Connect(CancellationToken cancellationToken)
         {
-            Console.WriteLine("Connecting to server...");
-            await _webSocket.ConnectAsync(new Uri("ws://localhost:8181"), cancellationToken);
-            var receiveMsgTask = Task.Run(async () => await ReceiveMessage());
-            var sendMsgTask = Task.Run(async () => await PublishMessage(new CancellationToken()));
-            Console.WriteLine("Connected!");
+            try
+            {
+                Console.WriteLine("Connecting to server...");
+                await _webSocket.ConnectAsync(new Uri("ws://localhost:8181"), cancellationToken);
+
+                var receiveMsgTask = Task.Run(async () => await ReceiveMessage());
+                var sendMsgTask = Task.Run(async () => await PublishMessage();
+                Console.WriteLine("Connected!");
 
 
-            await Task.WhenAny(receiveMsgTask, sendMsgTask);
-            Console.WriteLine("Completed.");
+                await Task.WhenAny(receiveMsgTask, sendMsgTask);
+                Console.WriteLine("Completed.");
+            }
+            catch (TaskCanceledException t)
+            {
+                Console.WriteLine("Task cancelled", t.Message);
+            }
         }
 
         public async Task Disconnect(CancellationToken cancellationToken)
@@ -45,26 +53,34 @@ namespace VoiceModTest.Host.services
             await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client Disconnect", cancellationToken);
         }
 
-        //new cancellation token each time?
-        public async Task PublishMessage(CancellationToken cancellationToken)
+        public async Task PublishMessage()
         {
-            Console.WriteLine(@"Type ""exit<Enter>"" to quit... ");
-            for (var message = Console.ReadLine(); message != "exit"; message = Console.ReadLine())
+            try
             {
+                Console.WriteLine(@"Type ""exit<Enter>"" to quit... ");
+                for (var message = Console.ReadLine(); message != "exit"; message = Console.ReadLine())
+                {
 
-                //Remove user input line - replace with received message. 
-                int x = Console.CursorLeft;
-                int y = Console.CursorTop ==0 ? 0 : Console.CursorTop-1;
-                Console.SetCursorPosition(x, y);
+                    //Remove user input line - replace with received message. 
+                    int x = Console.CursorLeft;
+                    int y = Console.CursorTop == 0 ? 0 : Console.CursorTop - 1;
+                    Console.SetCursorPosition(x, y);
 
-                var publishedMessage = $"{Username}: {message}";
-                var inputBytes = Encoding.UTF8.GetBytes(publishedMessage);
+                    var publishedMessage = $"{Username}: {message}";
+                    var inputBytes = Encoding.UTF8.GetBytes(publishedMessage);
 
-                await _webSocket.SendAsync(new ArraySegment<byte>(inputBytes),
-                                WebSocketMessageType.Text,
-                                true,
-                                cancellationToken);
-
+                    using (var cancellationTokenSource = new CancellationTokenSource(1000))
+                    {
+                        await _webSocket.SendAsync(new ArraySegment<byte>(inputBytes),
+                                    WebSocketMessageType.Text,
+                                    true,
+                                    cancellationTokenSource.Token);
+                    }
+                }
+            }
+            catch(TaskCanceledException t)
+            {
+                Console.WriteLine("Task Cancelled..", t.Message);
             }
         }
 
