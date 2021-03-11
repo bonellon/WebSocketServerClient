@@ -1,27 +1,36 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Fleck;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using VoiceModTest.Host.services;
 
 namespace VoiceModTest.Host
 {
+
     class Program
     {
         static async Task Main(string[] args)
         {
+            var services = new ServiceCollection();
+            var serviceProvider = Startup.ConfigureServices(services);
+
+            using var applicationScope = serviceProvider.CreateScope();
+
+            var logger = applicationScope.ServiceProvider.GetService<ILogger<Program>>();
+
             //get port from args
             var port = 8181;
             var available = CheckIfPortAvailable(port);
 
             if (available)
             {
-                new MessagingServer($"ws://0.0.0.0:{port}");
+                var serverUri = $"ws://0.0.0.0:{port}";
+                logger.LogInformation($"Initialising new Server at URI: {serverUri}");
+                new MessagingServer(applicationScope.ServiceProvider.GetService<ILogger<MessagingServer>>(), serverUri);
             }
 
             var client = new MessageClient();

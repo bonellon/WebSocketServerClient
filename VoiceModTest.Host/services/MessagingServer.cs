@@ -1,4 +1,5 @@
 ﻿using Fleck;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,15 +8,15 @@ namespace VoiceModTest.Host.services
 {
     public class MessagingServer
     {
-        private List<IWebSocketConnection> _webConnections;
-        private FleckLog _logger;
+        private List<IWebSocketConnection> _webConnections = new List<IWebSocketConnection>();
+        private readonly ILogger<MessagingServer> _logger;
         private WebSocketServer _server;
 
         //On first connection ask for the name and map the name -> ConnectionGuid in server
-        public MessagingServer(string serverURI)
+        public MessagingServer(ILogger<MessagingServer> logger, string serverURI)
         {
-            _webConnections = new List<IWebSocketConnection>();
-            _logger = new FleckLog();
+            _logger = logger;
+
             _server = new WebSocketServer(serverURI);
             Start();
         }
@@ -35,7 +36,7 @@ namespace VoiceModTest.Host.services
 
                 socket.OnBinary = bytes =>
                 {
-                    Console.WriteLine($"Received binary message from: {socket.ConnectionInfo.Id}");
+                    _logger.LogInformation($"Received binary message from: {socket.ConnectionInfo.Id}");
                     _webConnections.ForEach(s => s.Send($"{socket.ConnectionInfo.Id} : {Encoding.UTF8.GetString(bytes)}"));
                 };
 

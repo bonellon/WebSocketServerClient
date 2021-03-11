@@ -35,7 +35,7 @@ namespace VoiceModTest.Host.services
                 await _webSocket.ConnectAsync(new Uri("ws://localhost:8181"), cancellationToken);
 
                 var receiveMsgTask = Task.Run(async () => await ReceiveMessage());
-                var sendMsgTask = Task.Run(async () => await PublishMessage();
+                var sendMsgTask = Task.Run(async () => await PublishMessage());
                 Console.WriteLine("Connected!");
 
 
