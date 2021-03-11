@@ -1,12 +1,15 @@
 ﻿using System;
-using System.IO;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using VoiceModTest.Contracts;
+using VoiceModTest.Host.services;
 
 namespace VoiceModTest.Host
 {
+    /// <summary>
+    /// Startup class responsible for Dependency Injection
+    /// </summary>
     public class Startup
     {
         public static IServiceProvider ConfigureServices(IServiceCollection services)
@@ -14,6 +17,9 @@ namespace VoiceModTest.Host
             ConfigureLogging(services);
 
             //Add services
+            services.AddScoped<Runner>();
+            services.AddScoped<IMessageServer, MessageServer>();
+            services.AddScoped<IMessageClient, MessageClient>();
 
             return services.BuildServiceProvider();
         }
