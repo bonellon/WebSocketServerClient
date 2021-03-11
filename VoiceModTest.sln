@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoiceModTest.Contracts", "VoiceModTest.Contracts\VoiceModTest.Contracts.csproj", "{84941B40-06A0-4845-9ADB-06BB172EC074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoiceModTest.Contracts", "VoiceModTest.Contracts\VoiceModTest.Contracts.csproj", "{84941B40-06A0-4845-9ADB-06BB172EC074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoiceModTest.Host", "VoiceModTest.Host\VoiceModTest.Host.csproj", "{BA77AD01-F6B9-4828-82C6-FED59280D146}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VoiceModTest.Host", "VoiceModTest.Host\VoiceModTest.Host.csproj", "{BA77AD01-F6B9-4828-82C6-FED59280D146}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "webapi", "webapi\webapi.csproj", "{0C0BFFFF-301D-4F71-86DB-A3E5B799C36D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webapi", "webapi\webapi.csproj", "{0C0BFFFF-301D-4F71-86DB-A3E5B799C36D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
