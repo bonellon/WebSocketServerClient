@@ -23,10 +23,8 @@ namespace VoiceModTest.Host
             _messageClient = messageClient;
         }
 
-        public async Task RunAsync()
+        public async Task RunAsync(int port)
         {
-            //get port from args
-            var port = 8181;
             var available = CheckIfPortAvailable(port);
             var serverUri = $"ws://127.0.0.1:{port}";
 
